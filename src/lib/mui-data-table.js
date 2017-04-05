@@ -4,8 +4,6 @@ import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowCol
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 
-import Paper from 'material-ui/Paper';
-
 import FilterList from 'material-ui/svg-icons/content/filter-list';
 import SearchIcon from 'material-ui/svg-icons/action/search';
 import NavigateRight from 'material-ui/svg-icons/image/navigate-next';
@@ -294,63 +292,61 @@ export default class MuiDataTable extends React.Component {
 
   render() {
     return (
-      <Paper zDepth={1}>
-        <Table>
-          <TableHeader>
-            <TableRow style={this.shouldShowItem(this.props.config.search)}>
-              <TableHeaderColumn
-                colSpan={this.calcColSpan(this.columns)}
-                style={searchHeaderColumnStyle}
+      <Table>
+        <TableHeader>
+          <TableRow style={this.shouldShowItem(this.props.config.search)}>
+            <TableHeaderColumn
+              colSpan={this.calcColSpan(this.columns)}
+              style={searchHeaderColumnStyle}
+            >
+              <SearchIcon style={this.state.iconStyleSearch} />
+              <input
+                type="search"
+                placeholder="Search"
+                style={this.state.style}
+                disabled={this.state.disabled}
+                onKeyUp={this.searchData}
+              />
+              <FilterList style={iconStyleFilter} onClick={this.toggleSearch} />
+            </TableHeaderColumn>
+          </TableRow>
+
+          <TableRow>
+            {this.mapColumnsToElems(this.columns)}
+          </TableRow>
+        </TableHeader>
+
+        <TableBody showRowHover>
+          {this.populateTableWithdata(this.state.tableData, this.columns)}
+        </TableBody>
+
+        <TableFooter style={this.shouldShowItem(this.props.config.paginated)}>
+          <TableRow>
+            <TableRowColumn
+              style={{ textAlign: 'right', verticalAlign: 'middle', width: '70%' }}
+            >
+              <span style={this.shouldShowMenu({ paddingRight: 15 })}>Rows per page:</span>
+              <SelectField
+                value={this.state.perPageSelection}
+                style={this.shouldShowMenu({ width: 35, fontSize: 13, top: 0 })}
+                onChange={this.handlePerPageChange}
               >
-                <SearchIcon style={this.state.iconStyleSearch} />
-                <input
-                  type="search"
-                  placeholder="Search"
-                  style={this.state.style}
-                  disabled={this.state.disabled}
-                  onKeyUp={this.searchData}
-                />
-                <FilterList style={iconStyleFilter} onClick={this.toggleSearch} />
-              </TableHeaderColumn>
-            </TableRow>
+                { this.handleRowSelection(this.props.config.paginated) }
+              </SelectField>
+            </TableRowColumn>
 
-            <TableRow>
-              {this.mapColumnsToElems(this.columns)}
-            </TableRow>
-          </TableHeader>
+            <TableRowColumn style={{ textAlign: 'right', verticalAlign: 'middle' }}>
+              <span> {this.showPaginationInfo()} </span>
+            </TableRowColumn>
 
-          <TableBody showRowHover>
-            {this.populateTableWithdata(this.state.tableData, this.columns)}
-          </TableBody>
+            <TableRowColumn style={{ textAlign: 'right', verticalAlign: 'middle' }}>
+              <NavigateLeft onClick={this.navigateLeft} style={this.state.navigationStyle} />
+              <NavigateRight onClick={this.navigateRight} style={this.state.navigationStyle} />
+            </TableRowColumn>
+          </TableRow>
+        </TableFooter>
 
-          <TableFooter style={this.shouldShowItem(this.props.config.paginated)}>
-            <TableRow>
-              <TableRowColumn
-                style={{ textAlign: 'right', verticalAlign: 'middle', width: '70%' }}
-              >
-                <span style={this.shouldShowMenu({ paddingRight: 15 })}>Rows per page:</span>
-                <SelectField
-                  value={this.state.perPageSelection}
-                  style={this.shouldShowMenu({ width: 35, fontSize: 13, top: 0 })}
-                  onChange={this.handlePerPageChange}
-                >
-                  { this.handleRowSelection(this.props.config.paginated) }
-                </SelectField>
-              </TableRowColumn>
-
-              <TableRowColumn style={{ textAlign: 'right', verticalAlign: 'middle' }}>
-                <span> {this.showPaginationInfo()} </span>
-              </TableRowColumn>
-
-              <TableRowColumn style={{ textAlign: 'right', verticalAlign: 'middle' }}>
-                <NavigateLeft onClick={this.navigateLeft} style={this.state.navigationStyle} />
-                <NavigateRight onClick={this.navigateRight} style={this.state.navigationStyle} />
-              </TableRowColumn>
-            </TableRow>
-          </TableFooter>
-
-        </Table>
-      </Paper>
+      </Table>
     );
   }
 }
